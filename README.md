@@ -1,5 +1,5 @@
 # TmpVids
 
-A video uploader using made with typescrip, running on nginx.
+A video uploader made with TypeScript, running on Nginx.
 
 Upload syntax: `curl -F 'video=@/path/to/videoFile' https://videos.kloudify.host/upload`
