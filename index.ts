@@ -22,6 +22,10 @@ app.get("/", (req, res) => {
   return res.send("Upload syntax: curl -F 'video=@/path/to/videoFile' https://videos.kloudify.host/upload");
 });
 
+app.get("/upload", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "upload.html"));
+});
+
 app.post("/upload", (req, res) => {
   let videoFile = req.files?.video as fileUpload.UploadedFile;
 
