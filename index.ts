@@ -28,8 +28,8 @@ app.get("/upload", (req, res) => {
 
 app.post("/upload", (req, res) => {
   let videoFile = req.files?.video as fileUpload.UploadedFile;
-
   let mimeType: string | boolean = mimeTypes.lookup(videoFile.name);
+
   if (!videoFile) {
     return res.status(400).send("\nProvide a video to upload\n");
   }
@@ -59,8 +59,13 @@ app.post("/upload", (req, res) => {
       console.log(err);
       return res.status(500).send("\nAn error occurred\n");
     }
+    let conciseQuery: string = req.query.concise as string;
 
-    return res.send(`\nhttps://videos.kloudify.host/${randomName + path.extname(videoFile.name)}\n`);
+    if (conciseQuery && conciseQuery.toLowerCase() === "true") {
+      return res.send(`\n[video](https://videos.kloudify.host/${randomName + path.extname(videoFile.name)})\n`);
+    } else {
+      return res.send(`\nhttps://videos.kloudify.host/${randomName + path.extname(videoFile.name)}\n`);
+    }
   });
 });
 
