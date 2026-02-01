@@ -7,6 +7,7 @@ import path from "path";
 import { checkSize } from "./Functions/checkSize.ts";
 import { generateName } from "./Functions/generateName.ts";
 import { spaceManagement } from "./Functions/spaceManagement.ts";
+import { loadEnvFile } from "process";
 const app = express();
 app.use(fileUpload());
 app.use(cors());
@@ -15,6 +16,7 @@ const allowedDirectorySize = 40 * 1024 * 1024 * 1024;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+loadEnvFile(path.join(__dirname, ".env"));
 const videoDirectory = path.join(__dirname, "videos");
 
 app.get("/", (req, res) => {
@@ -38,10 +40,15 @@ app.post("/upload", (req, res) => {
     return res.status(400).send("\nProvide a valid video file\n");
   }
 
+  let adminTokenENV = process.env.ADMIN_KEY;
+  let tokenQuery = req.query.token as string;
+
   let videoSizeCheck: boolean = checkSize(videoFile);
 
-  if (!videoSizeCheck) {
-    return res.send("\nVideo size must be less than 100MB\n");
+  if (!tokenQuery || (tokenQuery && tokenQuery !== adminTokenENV)) {
+    if (!videoSizeCheck) {
+      return res.send("\nVideo size must be less than 100MB\n");
+    }
   }
 
   let spaceManaged: boolean | void = spaceManagement(allowedDirectorySize, videoFile.size, videoDirectory);
